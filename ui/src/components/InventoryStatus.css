@@ -6,45 +6,146 @@
   margin-bottom: 2rem;
 }
 
+.inventory-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 .inventory-title {
-  margin: 0 0 1rem 0;
+  margin: 0;
   font-size: 1.5rem;
   font-weight: bold;
   color: #333;
 }
 
-.inventory-cards {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
+.add-menu-btn {
+  padding: 0.5rem 1rem;
+  background-color: #2d5016;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.inventory-card {
-  flex: 1;
-  min-width: 200px;
+.add-menu-btn:hover {
+  background-color: #3d7026;
+}
+
+.add-menu-btn:active {
+  background-color: #1d4010;
+}
+
+.add-menu-form {
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 1rem;
+  margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.form-input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #2d5016;
+}
+
+.form-submit-btn {
+  padding: 0.5rem 1.5rem;
+  background-color: #2d5016;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+}
+
+.form-submit-btn:hover {
+  background-color: #3d7026;
+}
+
+.form-submit-btn:active {
+  background-color: #1d4010;
+}
+
+.inventory-empty {
+  padding: 3rem;
+  text-align: center;
+  color: #999;
+  font-size: 1rem;
+}
+
+.inventory-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.inventory-card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.inventory-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.inventory-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
 }
 
 .inventory-menu-name {
   font-size: 1.1rem;
   font-weight: bold;
   color: #333;
+  flex: 1;
+  line-height: 1.4;
 }
 
 .inventory-stock-info {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background-color: #f9f9f9;
+  border-radius: 6px;
   gap: 0.75rem;
 }
 
 .inventory-stock {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: bold;
   color: #333;
 }
@@ -73,24 +174,36 @@
 
 .inventory-controls {
   display: flex;
-  gap: 0.5rem;
+  align-items: center;
   justify-content: center;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.inventory-quantity {
+  min-width: 40px;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #333;
 }
 
 .inventory-btn {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border: 1px solid #2d5016;
   background-color: #ffffff;
   color: #2d5016;
-  border-radius: 4px;
-  font-size: 1.2rem;
+  border-radius: 6px;
+  font-size: 1.3rem;
   font-weight: bold;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s;
+  transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .inventory-btn:hover {
@@ -102,13 +215,43 @@
   background-color: #1d4010;
 }
 
+.inventory-btn.delete-btn {
+  width: 28px;
+  height: 28px;
+  border-color: #d32f2f;
+  color: #d32f2f;
+  font-size: 1rem;
+  padding: 0;
+  margin-top: -0.25rem;
+  margin-right: -0.25rem;
+}
+
+.inventory-btn.delete-btn:hover {
+  background-color: #d32f2f;
+  color: #ffffff;
+}
+
+.inventory-btn.delete-btn:active {
+  background-color: #b71c1c;
+}
+
 @media (max-width: 768px) {
   .inventory-cards {
-    flex-direction: column;
+    grid-template-columns: 1fr;
   }
-  
-  .inventory-card {
-    min-width: 100%;
+
+  .inventory-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .add-menu-btn {
+    width: 100%;
+  }
+
+  .form-row {
+    flex-direction: column;
   }
 }
 
