@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import MenuCard from './components/MenuCard';
 import Cart from './components/Cart';
+import AdminDashboard from './components/AdminDashboard';
+import InventoryStatus from './components/InventoryStatus';
+import OrderStatus from './components/OrderStatus';
 import './App.css';
 
 // 임의의 커피 메뉴 데이터
@@ -66,6 +69,12 @@ const initialMenus = [
 function App() {
   const [currentPage, setCurrentPage] = useState('order');
   const [cartItems, setCartItems] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [inventory, setInventory] = useState([
+    { menuId: 1, menuName: '아메리카노 (ICE)', stock: 10 },
+    { menuId: 2, menuName: '아메리카노 (HOT)', stock: 10 },
+    { menuId: 3, menuName: '카페라떼', stock: 10 }
+  ]);
 
   const handleAddToCart = (menu, selectedOptions) => {
     const optionsPrice = selectedOptions.reduce((sum, opt) => sum + opt.additionalPrice, 0);
@@ -130,17 +139,70 @@ function App() {
       return;
     }
     
-    // 주문 처리 (추후 API 연동)
-    alert('주문이 완료되었습니다!');
+    // 주문 생성
+    const totalAmount = cartItems.reduce((sum, item) => sum + item.totalPrice, 0);
+    const newOrder = {
+      id: Date.now(),
+      items: cartItems.map(item => ({
+        menuId: item.menuId,
+        menuName: item.menuName,
+        selectedOptions: item.selectedOptions,
+        quantity: item.quantity,
+        totalPrice: item.totalPrice
+      })),
+      totalAmount: totalAmount,
+      status: 'received',
+      createdAt: new Date().toISOString()
+    };
+    
+    setOrders([newOrder, ...orders]);
     setCartItems([]);
+    alert('주문이 완료되었습니다!');
   };
 
   const handleNavigate = (page) => {
     setCurrentPage(page);
-    // 관리자 페이지는 추후 구현
-    if (page === 'admin') {
-      alert('관리자 페이지는 추후 구현 예정입니다.');
-    }
+  };
+
+  // 관리자 대시보드 통계 계산
+  const dashboardStats = {
+    totalOrders: orders.length,
+    receivedOrders: orders.filter(o => o.status === 'received').length,
+    preparingOrders: orders.filter(o => o.status === 'preparing').length,
+    completedOrders: orders.filter(o => o.status === 'completed').length
+  };
+
+  // 재고 변경 핸들러
+  const handleInventoryChange = (menuId, change) => {
+    setInventory(prev => prev.map(item => {
+      if (item.menuId === menuId) {
+        const newStock = Math.max(0, item.stock + change);
+        return { ...item, stock: newStock };
+      }
+      return item;
+    }));
+  };
+
+  // 주문 상태 변경 핸들러
+  const handleOrderStatusChange = (orderId, newStatus) => {
+    setOrders(prev => prev.map(order => {
+      if (order.id === orderId) {
+        // 제조 시작 시 재고 감소
+        if (newStatus === 'preparing' && order.status === 'received') {
+          order.items.forEach(item => {
+            setInventory(prevInventory => prevInventory.map(invItem => {
+              if (invItem.menuId === item.menuId) {
+                const newStock = Math.max(0, invItem.stock - item.quantity);
+                return { ...invItem, stock: newStock };
+              }
+              return invItem;
+            }));
+          });
+        }
+        return { ...order, status: newStatus };
+      }
+      return order;
+    }));
   };
 
   return (
@@ -165,6 +227,19 @@ function App() {
             onOrder={handleOrder}
             onQuantityChange={handleQuantityChange}
             onRemoveItem={handleRemoveItem}
+          />
+        </div>
+      )}
+      {currentPage === 'admin' && (
+        <div className="admin-page">
+          <AdminDashboard stats={dashboardStats} />
+          <InventoryStatus 
+            inventory={inventory}
+            onInventoryChange={handleInventoryChange}
+          />
+          <OrderStatus 
+            orders={orders}
+            onOrderStatusChange={handleOrderStatusChange}
           />
         </div>
       )}

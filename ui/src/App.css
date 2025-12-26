@@ -31,12 +31,22 @@
   justify-items: center;
 }
 
+.admin-page {
+  width: 100%;
+  padding: 2rem;
+  flex: 1;
+}
+
 @media (max-width: 768px) {
   .menu-grid {
     grid-template-columns: 1fr;
   }
   
   .order-page {
+    padding: 1rem;
+  }
+
+  .admin-page {
     padding: 1rem;
   }
 }
