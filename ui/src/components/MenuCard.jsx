@@ -25,10 +25,43 @@ function MenuCard({ menu, onAddToCart, inventoryStock = 0 }) {
     setSelectedOptions([]);
   };
 
+  // 이미지 경로 처리
+  // 데이터베이스에 전체 경로로 저장되므로 그대로 사용
+  const getImageUrl = () => {
+    if (!menu.imageUrl || menu.imageUrl.trim() === '') {
+      return null;
+    }
+    
+    // 외부 URL인 경우 그대로 사용
+    if (menu.imageUrl.startsWith('http://') || menu.imageUrl.startsWith('https://')) {
+      return menu.imageUrl;
+    }
+    
+    // 전체 경로로 저장되어 있으므로 그대로 사용
+    // /images/로 시작하는 경로는 public 폴더 기준으로 자동 처리됨
+    return menu.imageUrl;
+  };
+
+  const imageUrl = getImageUrl();
+
   return (
     <div className={`menu-card ${isOutOfStock ? 'out-of-stock' : ''}`}>
       <div className="menu-image">
-        <div className="image-placeholder">이미지</div>
+        {imageUrl ? (
+          <img 
+            src={imageUrl} 
+            alt={menu.name}
+            className="menu-image-img"
+            onError={(e) => {
+              // 이미지 로딩 실패 시 placeholder 표시
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'flex';
+            }}
+          />
+        ) : null}
+        <div className="image-placeholder" style={{ display: imageUrl ? 'none' : 'flex' }}>
+          이미지
+        </div>
         {isOutOfStock && <div className="stock-overlay">품절</div>}
       </div>
       <div className="menu-info">
@@ -38,22 +71,24 @@ function MenuCard({ menu, onAddToCart, inventoryStock = 0 }) {
           <p className="stock-warning">재고 부족 (남은 수량: {inventoryStock}개)</p>
         )}
         <p className="menu-description">{menu.description}</p>
-        <div className="menu-options">
-          {menu.options.map(option => (
-            <label key={option.id} className="option-checkbox">
-              <input
-                type="checkbox"
-                checked={selectedOptions.includes(option.id)}
-                onChange={() => handleOptionChange(option.id)}
-                disabled={isOutOfStock}
-                aria-label={`${option.name} 옵션 선택`}
-              />
-              <span>
-                {option.name} {option.additionalPrice > 0 ? `(+${option.additionalPrice.toLocaleString()}원)` : '(+0원)'}
-              </span>
-            </label>
-          ))}
-        </div>
+        {menu.options && menu.options.length > 0 && (
+          <div className="menu-options">
+            {menu.options.map(option => (
+              <label key={option.id} className="option-checkbox">
+                <input
+                  type="checkbox"
+                  checked={selectedOptions.includes(option.id)}
+                  onChange={() => handleOptionChange(option.id)}
+                  disabled={isOutOfStock}
+                  aria-label={`${option.name} 옵션 선택`}
+                />
+                <span>
+                  {option.name} {option.additionalPrice > 0 ? `(+${option.additionalPrice.toLocaleString()}원)` : '(+0원)'}
+                </span>
+              </label>
+            ))}
+          </div>
+        )}
         <button 
           className="add-to-cart-btn" 
           onClick={handleAddToCart}

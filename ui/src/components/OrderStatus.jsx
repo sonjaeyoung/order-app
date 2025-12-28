@@ -13,9 +13,12 @@ function OrderStatus({ orders, onOrderStatusChange }) {
   };
 
   const formatOrderItems = (items) => {
+    if (!items || items.length === 0) {
+      return '주문 아이템 없음';
+    }
     return items.map(item => {
-      const optionsText = item.selectedOptions.length > 0
-        ? ` (${item.selectedOptions.map(opt => opt.name).join(', ')})`
+      const optionsText = item.selectedOptions && item.selectedOptions.length > 0
+        ? ` (${item.selectedOptions.map(opt => opt.optionName || opt.name).join(', ')})`
         : '';
       return `${item.menuName}${optionsText} x ${item.quantity}`;
     }).join(', ');

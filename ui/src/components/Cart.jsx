@@ -7,9 +7,15 @@ function Cart({ cartItems, onOrder, onQuantityChange, onRemoveItem }) {
   }, [cartItems]);
 
   const formatItemName = (item) => {
-    if (item.selectedOptions.length > 0) {
-      const optionsText = item.selectedOptions.map(opt => opt.name).join(', ');
-      return `${item.menuName} (${optionsText})`;
+    const options = item.selectedOptions || [];
+    if (options.length > 0) {
+      const optionsText = options
+        .filter(opt => opt && (opt.optionName || opt.name))
+        .map(opt => opt.optionName || opt.name)
+        .join(', ');
+      if (optionsText) {
+        return `${item.menuName} (${optionsText})`;
+      }
     }
     return item.menuName;
   };

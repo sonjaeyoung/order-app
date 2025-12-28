@@ -1,0 +1,34 @@
+{
+  "name": "coffee-order-server",
+  "version": "1.0.0",
+  "description": "커피 주문 앱 백엔드 서버",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:create": "node scripts/create-database.js",
+    "db:migrate": "node scripts/migrate.js",
+    "db:test": "node scripts/test-connection.js"
+  },
+  "keywords": [
+    "express",
+    "coffee",
+    "order"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
+
+
+
